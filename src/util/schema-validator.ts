@@ -1,7 +1,9 @@
 import Ajv, { JSONSchemaType, ErrorObject, ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import ajvErrors from 'ajv-errors';
-import { Request, Response, NextFunction, RequestHandler } from 'express';
+import {
+  Request, Response, NextFunction, RequestHandler,
+} from 'express';
 import { IValidationErrorMessage, List, OptionKey } from '../types';
 
 export class SchemaValidationError extends Error {
@@ -72,7 +74,7 @@ class RequestValidator {
 
   private validateRequest(
     compiledSchemas: { requestProperty: OptionKey; validateFunction: ValidateFunction }[],
-    req: Request
+    req: Request,
   ) {
     return compiledSchemas.reduce((errors, { requestProperty, validateFunction }) => {
       const valid = validateFunction(req[requestProperty]);

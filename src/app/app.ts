@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import createError, { HttpError } from 'http-errors';
 import {
-   securityMiddleware
+  securityMiddleware,
 } from '../middleware';
 import { router } from '../route';
 import { errorHandler } from '../middleware/error-handler';

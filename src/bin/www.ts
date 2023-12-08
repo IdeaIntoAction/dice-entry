@@ -5,8 +5,11 @@
  */
 import http from 'http';
 import app from '../app/app';
+import { config } from '../config';
+import { RabbitService } from '../service/rabbit/rabbit';
+import { logger } from '../util/logger';
 
-const port = 8080;
+const { port } = config.server;
 
 app.set('port', port);
 
@@ -26,14 +29,14 @@ function onError(error: any) {
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-  case 'EACCES':
-    process.exit(1);
-    break;
-  case 'EADDRINUSE':
-    process.exit(1);
-    break;
-  default:
-    throw error;
+    case 'EACCES':
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      process.exit(1);
+      break;
+    default:
+      throw error;
   }
 }
 
@@ -45,6 +48,13 @@ async function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr?.port}`;
   console.log('listening on', bind);
+
+  const rabbit = await RabbitService.getInstance();
+  await rabbit.init().then(() => {
+    logger.info('rabbitmq connected');
+  }).catch((err) => {
+    logger.error(err, 'rabbitmq connection failed');
+  });
 }
 
 /**
@@ -56,6 +66,8 @@ server.on('listening', onListening);
 
 process.on('SIGINT', () => {
   server.close(async () => {
+    const rabbit = await RabbitService.getInstance();
+    await rabbit.disconnect();
 
     process.exit(0);
   });

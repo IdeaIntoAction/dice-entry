@@ -1,4 +1,4 @@
-import { RequestSchema } from "../types";
+import { RequestSchema } from '../types';
 
 export interface IPlayRequest {
   amount: number;

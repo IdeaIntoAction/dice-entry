@@ -7,7 +7,7 @@ export class ErrorSerializerStrategy {
   }
 
   serializeError(error: Error) {
-    const serializer = this.serializers.find((serializer: IErrorSerializer) => serializer.canHandle(error));
+    const serializer = this.serializers.find((s: IErrorSerializer) => s.canHandle(error));
     return serializer?.serializeError(error);
   }
 }
