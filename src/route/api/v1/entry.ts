@@ -8,7 +8,7 @@ const router = Router();
 
 router
   .route('/')
-  .post(
+  .get(
     validator.validate(playRequestSchema),
     asyncErrorHandler(diceController.entry),
   );

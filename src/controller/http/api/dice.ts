@@ -1,4 +1,5 @@
-import { EmptyObject, IRequest, IResponse } from '../../../@types/express/interface';
+import crypto from 'crypto';
+import { EmptyObject, IRequest, IResponse } from '../../../@types/interface';
 import { IPlayRequest, IPlayResponse } from '../../../schema/play';
 import { RabbitService } from '../../../service/rabbit/rabbit';
 
@@ -10,17 +11,14 @@ export class DiceController {
       const rabbit = await RabbitService.getInstance();
 
       const request = {
-        id: '123',
-        nickname: 'test',
+        id: crypto.randomUUID(),
+        nickname: _req.user!.nickname,
+        userId: _req.user!.userId,
       };
 
-      const result = await rabbit.getDiceResult(request);
+      const data = await rabbit.getDiceResult(request);
 
-      const response = {
-        data: result,
-      };
-
-      return res.send(response);
+      return res.send({ data });
     };
 }
 export const diceController = new DiceController();

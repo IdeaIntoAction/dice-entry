@@ -6,12 +6,9 @@ import { IDiceRequest } from './interface';
 export class RabbitRPCRequest extends EventEmitter {
   private _id?: string;
 
-  request: any;
-
-  constructor(request: IDiceRequest) {
+  constructor(private request: IDiceRequest) {
     super();
     this._id = request.id;
-    this.request = request;
     this.on('error', this._errorHandler.bind(this));
   }
 
@@ -21,16 +18,16 @@ export class RabbitRPCRequest extends EventEmitter {
 
   public complete(message: string) {
     logger.info(`[RPC Request Complete] Received message: ${message}`);
-    this.emit('complete', message);
+    const result = JSON.parse(message);
+    this.emit('complete', result);
     this.destroy();
-    return message;
+    return result;
   }
 
   public destroy() {
     logger.debug('[RPC Request Destroy] Clearing resources');
     this.removeAllListeners();
     this._id = undefined;
-    this.request = null;
   }
 
   private _errorHandler(error: any) {
@@ -40,7 +37,7 @@ export class RabbitRPCRequest extends EventEmitter {
   async publish(connection: RabbitConnect) {
     const { channel } = connection;
     const message = JSON.stringify({ ...this.request, id: this._id });
-    await channel.publish(connection.exchange, '', Buffer.from(message), {
+    channel.publish(connection.exchange, '', Buffer.from(message), {
       correlationId: this._id,
       replyTo: connection.pushQueue,
     });

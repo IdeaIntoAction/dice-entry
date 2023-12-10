@@ -1,5 +1,5 @@
 import { NextFunction } from 'express';
-import { IRequest, IResponse } from '../@types/express/interface';
+import { IRequest, IResponse } from '../@types/interface';
 
 type AsyncFunction = (
   req: IRequest<any, any, any>,

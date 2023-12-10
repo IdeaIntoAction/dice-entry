@@ -7,4 +7,7 @@ module.exports = {
   server: {
     port: +(process.env.SERVER_PORT || '8080'),
   },
+  auth: {
+    secret: process.env.AUTH_SECRET,
+  },
 };
